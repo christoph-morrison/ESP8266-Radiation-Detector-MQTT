@@ -65,7 +65,7 @@ If your detector board and the ESP8266 board are already assembled, no tools are
 
 ### MQTT data structure
 
-```
+```text
 $mqttTopicPrefix/$deviceId/
   +--- keep-alive = ping will be perodiocally pushed to show, that the system is still running and connected
   +--- connection = LWT from MQTT, will be online or offline
@@ -86,8 +86,9 @@ $mqttTopicPrefix/$deviceId/
 ```
 
 ## License
-```
-ESP8266 based gateway for Canjoe-style Radiation detector boards to MQTT
+
+```text
+ESP8266 based gateway for CAJOE-style Radiation detector boards to MQTT
 Copyright (C) 2022, Christoph 'knurd' Morrison <code@christoph-morrison.de>
 
 This program is free software: you can redistribute it and/or modify
@@ -105,4 +106,3 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
 See also the [LICENSE](LICENSE).
-Wi-Fi
