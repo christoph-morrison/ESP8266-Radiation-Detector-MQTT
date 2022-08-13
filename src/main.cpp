@@ -88,6 +88,8 @@ WiFiClient   wifiClient;
 PubSubClient mqttClient;
 
 WiFiManagerParameter custom_mqtt_server("server", "mqtt server", Config::mqtt_server, sizeof(Config::mqtt_server));
+WiFiManagerParameter custom_mqtt_port("port", "MQTT server port", Config::mqtt_port, sizeof(Config::mqtt_port));
+WiFiManagerParameter custom_mqtt_topic("topic", "MQTT base topic", Config::mqtt_topic, sizeof(Config::mqtt_topic));
 WiFiManagerParameter custom_mqtt_user("user", "MQTT username", Config::username, sizeof(Config::username));
 WiFiManagerParameter custom_mqtt_pass("pass", "MQTT password", Config::password, sizeof(Config::password));
 
@@ -130,8 +132,10 @@ void setupWifi() {
     wifiManager.setSaveConfigCallback(saveConfigCallback);
 
     wifiManager.addParameter(&custom_mqtt_server);
+    wifiManager.addParameter(&custom_mqtt_port);
     wifiManager.addParameter(&custom_mqtt_user);
     wifiManager.addParameter(&custom_mqtt_pass);
+    wifiManager.addParameter(&custom_mqtt_topic);
 
     WiFi.hostname(identifier);
     wifiManager.autoConnect(identifier);
@@ -140,6 +144,8 @@ void setupWifi() {
     strcpy(Config::mqtt_server, custom_mqtt_server.getValue());
     strcpy(Config::username, custom_mqtt_user.getValue());
     strcpy(Config::password, custom_mqtt_pass.getValue());
+    strcpy(Config::mqtt_port, custom_mqtt_port.getValue());
+    strcpy(Config::mqtt_topic, custom_mqtt_topic.getValue());
 
     if (shouldSaveConfig) {
         Config::save();
@@ -282,7 +288,7 @@ void setup() {
     delay(3000);
 
     snprintf(identifier, sizeof(identifier), "%s-%X", FIRMWARE_PREFIX, ESP.getChipId());
-    snprintf(MQTT_TOPIC_AVAILABILITY, 127,   "%s/%X/connection",  mqttTopicPrefix.c_str(), ESP.getChipId());
+    snprintf(MQTT_TOPIC_AVAILABILITY, 127,   "%s/%X/connection",  Config::mqtt_topic, ESP.getChipId());
     snprintf(MQTT_TOPIC_STATE, 127,          "%s/%X/state",       mqttTopicPrefix.c_str(), ESP.getChipId());
     snprintf(MQTT_TOPIC_COMMAND, 127,        "%s/%X/command",     mqttTopicPrefix.c_str(), ESP.getChipId());
     snprintf(MQTT_TOPIC_KEEP_ALIVE, 127,     "%s/%X/keep-alive",  mqttTopicPrefix.c_str(), ESP.getChipId());
@@ -293,7 +299,8 @@ void setup() {
 
     setupWifi();
     setupOTA();
-    mqttClient.setServer(Config::mqtt_server, 1883);
+
+    mqttClient.setServer(Config::mqtt_server, atoi(Config::mqtt_port));
     mqttClient.setKeepAlive(10);
     mqttClient.setBufferSize(2048);
     mqttClient.setCallback(mqttCallback);

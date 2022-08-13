@@ -6,6 +6,8 @@
 
 namespace Config {
     char mqtt_server[80] = "example.com";
+    char mqtt_topic[256] = "esp/radiation-detector";
+    char mqtt_port[5]    = "1883";
 
     char username[100] = "";
     char password[100] = "";
@@ -13,6 +15,8 @@ namespace Config {
     void save() {
         DynamicJsonDocument json(512);
         json["mqtt_server"]  = mqtt_server;
+        json["mqtt_port"]    = mqtt_port;
+        json["mqtt_topic"]   = mqtt_topic;
         json["username"]     = username;
         json["password"]     = password;
 
@@ -40,6 +44,8 @@ namespace Config {
 
                     if (DeserializationError::Ok == deserializeJson(json, buf.get())) {
                         strcpy(mqtt_server, json["mqtt_server"]);
+                        strcpy(mqtt_server, json["mqtt_port"]);
+                        strcpy(mqtt_server, json["mqtt_topic"]);
                         strcpy(username, json["username"]);
                         strcpy(password, json["password"]);
                     }
